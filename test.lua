@@ -1,5 +1,6 @@
 -- Pkg to test
 local nnop = require 'nnop'
+local nngraph = require 'nngraph'
 
 local totem = require 'totem'
 local tester = totem.Tester()
@@ -37,13 +38,30 @@ local tests = {
 
       -- Second example: let Linear generate its parameters
       local linear = nnop.Linear(100,10)
-      local parameters = linear.parameters
-      local res = linear:forward({torch.randn(100), parameters[1]:forward(), parameters[2]:forward()})
+      local parameters = linear.parameterNodes
+      local res = linear:forward({torch.randn(100), parameters.weight:forward(), parameters.bias:forward()})
 
       -- Test:
       tester:eq(res:dim(), 1, 'incorrect nb of dims')
       tester:eq(res:size(1), 10, 'incorrect size')
    end,
+
+   nngraph = function()
+      -- create base modules:
+      local linear1 = nnop.Linear(10,100)
+      local tanh1 = nn.Tanh()
+      local linear2 = nnop.Linear(100,2)
+
+      -- bind them in a graph:
+      local input = nn.Identity()()
+      local layer1 = linear1({input, linear1.parameterNodes.weight(), linear1.parameterNodes.bias()})
+      local layer2 = tanh1(layer1)
+      local output = linear2({layer2, linear2.parameterNodes.weight(), linear2.parameterNodes.bias()})
+
+      -- build final model:
+      -- TODO: fix up nngrpah to allow fake inputs (for parameters)
+      --local model = nn.gModule({input}, {output})
+   end
 }
 
 tester:add(tests):run()

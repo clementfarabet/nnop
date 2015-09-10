@@ -8,9 +8,9 @@ function Linear:__init(inputSize, outputSize)
       torch.Tensor(),
    }
    if inputSize and outputSize then
-      self.parameters = {
-         nnop.Parameters(outputSize, inputSize),
-         nnop.Parameters(outputSize)
+      self.parameterNodes = {
+         weight = nnop.Parameters(outputSize, inputSize),
+         bias = nnop.Parameters(outputSize)
       }
    end
 end
