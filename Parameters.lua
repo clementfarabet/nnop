@@ -11,10 +11,6 @@ function Parameters:updateOutput()
    return self.output
 end
 
-function Parameters:updateGradInput(_, gradOutput)
-   self.gradInput = gradOutput
-end
-
 function Parameters:accGradParameters(_, gradOutput, scale)
-   self.gradWeight:add(scale, self.gradInput)
+   self.gradWeight:add(scale, gradOutput)
 end
