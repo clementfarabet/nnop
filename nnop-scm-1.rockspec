@@ -2,13 +2,14 @@ package = "nnop"
 version = "scm-1"
 
 source = {
-   url = "",
+   url = "git@github.com:clementfarabet/nnop.git",
    branch = "master",
 }
 
 description = {
    summary = "NN Modules with operations only (no data).",
-   license = "BSD"
+   homepage = "https://github.com/clementfarabet/nnop",
+   license = "MIT",
 }
 
 dependencies = {
