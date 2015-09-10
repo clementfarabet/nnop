@@ -34,6 +34,15 @@ local tests = {
       local grads = linear:backward({torch.randn(100), linearWeight:forward(), linearBias:forward()}, res)
       linearWeight:backward(nil, grads[2])
       linearBias:backward(nil, grads[3])
+
+      -- Second example: let Linear generate its parameters
+      local linear = nnop.Linear(100,10)
+      local parameters = linear.parameters
+      local res = linear:forward({torch.randn(100), parameters[1]:forward(), parameters[2]:forward()})
+
+      -- Test:
+      tester:eq(res:dim(), 1, 'incorrect nb of dims')
+      tester:eq(res:size(1), 10, 'incorrect size')
    end,
 }
 

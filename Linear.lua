@@ -1,12 +1,18 @@
 local Linear, parent = torch.class('nnop.Linear', 'nn.Module')
 
-function Linear:__init()
+function Linear:__init(inputSize, outputSize)
    parent.__init(self)
    self.gradInput = {
       torch.Tensor(),
       torch.Tensor(),
       torch.Tensor(),
    }
+   if inputSize and outputSize then
+      self.parameters = {
+         nnop.Parameters(outputSize, inputSize),
+         nnop.Parameters(outputSize)
+      }
+   end
 end
 
 function Linear:updateOutput(inputs)
