@@ -1,4 +1,4 @@
-local Parameters, parent = torch.class('nnop.Parameters', 'nn.Module')
+local Parameters, parent = torch.class('nnop.Parameters', 'nnop.Module')
 
 function Parameters:__init(...)
    parent.__init(self)

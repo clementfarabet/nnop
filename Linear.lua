@@ -1,4 +1,4 @@
-local Linear, parent = torch.class('nnop.Linear', 'nn.Module')
+local Linear, parent = torch.class('nnop.Linear', 'nnop.Module')
 
 function Linear:__init(inputSize, outputSize)
    parent.__init(self)

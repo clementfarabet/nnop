@@ -16,11 +16,13 @@ dependencies = {
    "torch >= 7.0",
    "totem",
    "nn",
+   "nngraph",
 }
 
 build = {
    type = "builtin",
    modules = {
+      ['nnop.Module'] = 'Module.lua',
       ['nnop.init'] = 'init.lua',
       ['nnop.Linear'] = 'Linear.lua',
       ['nnop.Parameters'] = 'Parameters.lua',

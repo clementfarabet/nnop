@@ -122,7 +122,29 @@ local tests = {
          local err = Jacobian.testJacobianParameters(model, input, parameters[1], gradParameters[1])
          tester:assertlt(err, precision, 'error on gradParameters['..i..']')
       end
-   end
+   end,
+
+   LinearGraphAutoParams = function()
+      -- bind them in a graph:
+      local input = nn.Identity()()
+      local layer1 = nnop.Linear(10,100)(input)
+      local layer2 = nn.Tanh()(layer1)
+      local output = nnop.Linear(100,2)(layer2)
+
+      -- build final model:
+      local model = nn.gModule({input}, {output})
+
+      -- geometry tests:
+      local input = torch.rand(10)
+      local gradOutput = torch.rand(2)
+      local output = model:forward(input)
+      local gradInput = model:updateGradInput(input, gradOutput)
+      model:accGradParameters(input, gradOutput)
+
+      tester:asserteq(output:dim(), 1 , 'incorrect nb of dims')
+      tester:asserteq(output:size(1), 2, 'incorrect output size')
+      tester:asserteq(gradInput:size(1), input:size(1), 'gradInput wrong size')
+   end,
 }
 
 tester:add(tests):run()
