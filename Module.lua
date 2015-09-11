@@ -6,10 +6,12 @@ function Module:__call__(...)
       -- auto-connect parameters:
       local nodes = {args[1]}
       if self.parameterNodes.weight then
-         table.insert(nodes, self.parameterNodes.weight())
+         self.parameterNodes.weightNode = self.parameterNodes.weight()
+         table.insert(nodes, self.parameterNodes.weightNode)
       end
       if self.parameterNodes.bias then
-         table.insert(nodes, self.parameterNodes.bias())
+         self.parameterNodes.biasNode = self.parameterNodes.bias()
+         table.insert(nodes, self.parameterNodes.biasNode)
       end
       return parent.__call__(self,nodes)
    else

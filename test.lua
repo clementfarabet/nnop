@@ -1,7 +1,6 @@
 -- Pkg to test
 local nnop = require 'nnop'
 local nngraph = require 'nngraph'
-nngraph.setDebug(true)
 
 -- Tester:
 local totem = require 'totem'
@@ -154,6 +153,28 @@ local tests = {
       tester:assertgt(layer1.data.module.parameterNodes.bias.weight:min(), -1.01, 'incorrect initialization')
       tester:assertlt(layer3.data.module.parameterNodes.weight.weight:max(), 2.01, 'incorrect initialization')
       tester:assertgt(layer3.data.module.parameterNodes.bias.weight:min(), -2.01, 'incorrect initialization')
+   end,
+
+   LinearGraphWeightLoss = function()
+      -- bind them in a graph:
+      local input = nn.Identity()()
+      local layer1 = nnop.Linear(10,100)(input)
+      local layer2 = nn.Tanh()(layer1)
+      local layer3 = nnop.Linear(100,2)(layer2)
+
+      -- get weights:
+      local weight1 = layer1.data.module.parameterNodes.weightNode
+      local sparse1 = nn.L1Penalty(.001)(weight1)
+
+      -- build final model:
+      local model = nn.gModule({input}, {layer3})
+
+      -- geometry tests:
+      local input = torch.rand(10)
+      local output = model:forward(input)
+      local gradOutput = torch.rand(2)
+      local gradInput = model:updateGradInput(input, gradOutput)
+      model:accGradParameters(input, gradOutput)
    end,
 }
 
