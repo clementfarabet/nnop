@@ -59,8 +59,19 @@ local tests = {
       local output = linear2({layer2, linear2.parameterNodes.weight(), linear2.parameterNodes.bias()})
 
       -- build final model:
-      -- TODO: fix up nngrpah to allow fake inputs (for parameters)
-      --local model = nn.gModule({input}, {output})
+      local model = nn.gModule({input}, {output})
+
+      nngraph.setDebug(true)
+
+      local input = torch.rand(10)
+      local gradOutput = torch.rand(2)
+      local output = model:forward(input)
+      local gradInput = model:updateGradInput(input, gradOutput)
+      model:accGradParameters(input, gradOutput)
+
+      tester:eq(output:dim(), 1 , 'incorrect nb of dims')
+      tester:eq(output:size(1), 2, 'incorrect output size')
+      tester:eq(gradInput:size(), input:size(), 'gradInput wrong size')
    end
 }
 
