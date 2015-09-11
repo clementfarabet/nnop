@@ -156,14 +156,19 @@ local tests = {
    end,
 
    LinearGraphWeightLoss = function()
+      -- create base modules:
+      local linear1 = nnop.Linear(10,100)
+      local tanh1 = nn.Tanh()
+      local linear2 = nnop.Linear(100,2)
+
       -- bind them in a graph:
       local input = nn.Identity()()
-      local layer1 = nnop.Linear(10,100)(input)
-      local layer2 = nn.Tanh()(layer1)
-      local layer3 = nnop.Linear(100,2)(layer2)
+      local layer1 = linear1(input)
+      local layer2 = tanh1(layer1)
+      local layer3 = linear2(layer2)
 
       -- get weights:
-      local weight1 = layer1.data.module.parameterNodes.weightNode
+      local weight1 = linear1.parameterNodes.weightNode
       local sparse1 = nn.L1Penalty(.001)(weight1)
 
       -- build final model:
