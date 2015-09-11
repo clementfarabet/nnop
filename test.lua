@@ -129,10 +129,10 @@ local tests = {
       local input = nn.Identity()()
       local layer1 = nnop.Linear(10,100)(input)
       local layer2 = nn.Tanh()(layer1)
-      local output = nnop.Linear(100,2)(layer2)
+      local layer3 = nnop.Linear(100,2)(layer2)
 
       -- build final model:
-      local model = nn.gModule({input}, {output})
+      local model = nn.gModule({input}, {layer3})
 
       -- geometry tests:
       local input = torch.rand(10)
@@ -144,6 +144,16 @@ local tests = {
       tester:asserteq(output:dim(), 1 , 'incorrect nb of dims')
       tester:asserteq(output:size(1), 2, 'incorrect output size')
       tester:asserteq(gradInput:size(1), input:size(1), 'gradInput wrong size')
+
+      -- play with parameters:
+      layer1.data.module.parameterNodes.weight:uniform(-1,1)
+      layer1.data.module.parameterNodes.bias:uniform(-1,1)
+      layer3.data.module.parameterNodes.weight:uniform(-2,2)
+      layer3.data.module.parameterNodes.bias:uniform(-2,2)
+      tester:assertlt(layer1.data.module.parameterNodes.weight.weight:max(), 1.01, 'incorrect initialization')
+      tester:assertgt(layer1.data.module.parameterNodes.bias.weight:min(), -1.01, 'incorrect initialization')
+      tester:assertlt(layer3.data.module.parameterNodes.weight.weight:max(), 2.01, 'incorrect initialization')
+      tester:assertgt(layer3.data.module.parameterNodes.bias.weight:min(), -2.01, 'incorrect initialization')
    end,
 }
 
