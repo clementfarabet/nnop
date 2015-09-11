@@ -20,5 +20,6 @@ function Parameters:updateOutput()
 end
 
 function Parameters:accGradParameters(_, gradOutput, scale)
+   scale = scale or 1
    self.gradWeight:add(scale, gradOutput)
 end
