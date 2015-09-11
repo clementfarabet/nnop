@@ -3,9 +3,25 @@
 Parameter-free / operation-only Neural Network primitives
 for torch/nn.
 
-Motivation: it's useful to treat parameters as regular states,
+## Motivation, Goals
+
+Sometimes, it's useful to treat parameters as regular states,
 to either impose certain constraints on them, or simply
 make weight sharing visible / straight-forward.
+
+The original design of [nn](https://github.com/torch/nn) treats
+trainable parameters as special variables. This package, `nnop`,
+builds on `nn` and `nngraph`, but separates parameters from operations.
+
+It introduces a new module, `nn.Parameters`, which provides trainable
+parameters, but does not do any computation. Every other parameterized
+node (`nn.Linear`, `nn.SpatialConvolution`, ...) needs to be wrapped in
+`nnop` to decouple trainable parameters, and become pure operation nodes.
+
+## TODO
+
+* wrap remaining parametrized nodes (`nn.SpatialConvolution`, ...)
+* simplify/unify auto-generated parameterNodes?
 
 ## Examples
 
