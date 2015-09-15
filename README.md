@@ -53,7 +53,7 @@ res = graph:forward({input, input})
 assert(res[1]:dist( res[2] ) == 0)
 ```
 
-### Constraint on a set of parameters
+### Penalty on a set of parameters
 
 In this example, we add an L1 penalty on a set of weight.
 
@@ -61,7 +61,7 @@ When parameters are provided to the nnop.Linear constructor,
 parameter nodes are automatically created (and automatically
 connected in the graph!). We use this in this example, this
 way we don't have to create the parameter nodes, but are still
-free to access them and constrain them.
+free to access them and add a penalty on them.
 
 ```lua
 -- create base modules:
