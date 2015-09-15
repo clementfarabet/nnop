@@ -9,7 +9,8 @@ nnop = {}
 require('./Module')
 require('./Linear')
 
--- special node: parameters
+-- special graph nodes: input and parameters
+require('./Input')
 require('./Parameters')
 
 -- tests

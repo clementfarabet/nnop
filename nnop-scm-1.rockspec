@@ -25,6 +25,7 @@ build = {
       ['nnop.Module'] = 'Module.lua',
       ['nnop.init'] = 'init.lua',
       ['nnop.Linear'] = 'Linear.lua',
+      ['nnop.Input'] = 'Input.lua',
       ['nnop.Parameters'] = 'Parameters.lua',
       ['nnop.test'] = 'test.lua',
    },
