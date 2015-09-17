@@ -61,7 +61,7 @@ local tests = {
       local linear2 = nnop.Linear(100,2)
 
       -- bind them in a graph:
-      local input = nn.Identity()()
+      local input = nnop.Input()()
       local layer1 = linear1({input, linear1.parameterNodes.weight(), linear1.parameterNodes.bias()})
       local layer2 = tanh1(layer1)
       local output = linear2({layer2, linear2.parameterNodes.weight(), linear2.parameterNodes.bias()})
@@ -102,7 +102,7 @@ local tests = {
       local linear2 = nnop.Linear(100,2)
 
       -- bind them in a graph:
-      local input = nn.Identity()()
+      local input = nnop.Input()()
       local layer1 = linear1({input, linear1.parameterNodes.weight(), linear1.parameterNodes.bias()})
       local layer2 = tanh1(layer1)
       local output = linear2({layer2, linear2.parameterNodes.weight(), linear2.parameterNodes.bias()})
@@ -125,7 +125,7 @@ local tests = {
 
    LinearGraphAutoParams = function()
       -- bind them in a graph:
-      local input = nn.Identity()()
+      local input = nnop.Input()()
       local layer1 = nnop.Linear(10,100)(input)
       local layer2 = nn.Tanh()(layer1)
       local layer3 = nnop.Linear(100,2)(layer2)
@@ -162,7 +162,7 @@ local tests = {
       local linear2 = nnop.Linear(100,2)
 
       -- bind them in a graph:
-      local input = nn.Identity()()
+      local input = nnop.Input()()
       local layer1 = linear1(input)
       local layer2 = tanh1(layer1)
       local layer3 = linear2(layer2)
@@ -180,6 +180,30 @@ local tests = {
       local gradOutput = torch.rand(2)
       local gradInput = model:updateGradInput(input, gradOutput)
       model:accGradParameters(input, gradOutput)
+   end,
+
+   SpatialConvolutionMMJacobian = function()
+      -- create base modules:
+      local conv = nnop.SpatialConvolutionMM(4,16,5,5)
+
+      -- bind them in a graph:
+      local input = nnop.Input()()
+      local output = conv({input, conv.parameterNodes.weight(), conv.parameterNodes.bias()})
+
+      -- build final model:
+      local model = nn.gModule({input}, {output})
+
+      -- Test backprop:
+      local input = torch.Tensor(4,10,10):zero()
+      local err = Jacobian.testJacobian(model, input)
+      tester:assertlt(err, precision, 'error on gradInput')
+
+      -- Test internal weights:
+      local parameters,gradParameters = model:parameters()
+      for i = 1,#parameters do
+         local err = Jacobian.testJacobianParameters(model, input, parameters[1], gradParameters[1])
+         tester:assertlt(err, precision, 'error on gradParameters['..i..']')
+      end
    end,
 }
 

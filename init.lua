@@ -8,6 +8,7 @@ nnop = {}
 -- modules:
 require('./Module')
 require('./Linear')
+require('./SpatialConvolutionMM')
 
 -- special graph nodes: input and parameters
 require('./Input')
