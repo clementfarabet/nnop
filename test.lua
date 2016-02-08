@@ -21,7 +21,7 @@ local tests = {
       local linearBias = nnop.Parameters(10)
 
       -- Forward:
-      tester:assert(linearWeight:forward():dim(), 2, 'incorrect nb of dims')
+      tester:asserteq(linearWeight:forward():dim(), 2, 'incorrect nb of dims')
    end,
 
    LinearBasic = function()
