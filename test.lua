@@ -171,13 +171,18 @@ local tests = {
       local weight1 = linear1.parameterNodes.weightNode
       local sparse1 = nn.L1Penalty(.001)(weight1)
 
+      -- compute cost.
+      local rawCost = nn.Sum(1)(layer3)
+      local penalty = nn.Sum(1)(nn.Sum(2)(sparse1))
+      local cost = nn.CAddTable()({rawCost, penalty})
+
       -- build final model:
-      local model = nn.gModule({input}, {layer3})
+      local model = nn.gModule({input}, {cost})
 
       -- geometry tests:
       local input = torch.rand(10)
       local output = model:forward(input)
-      local gradOutput = torch.rand(2)
+      local gradOutput = torch.rand(1)
       local gradInput = model:updateGradInput(input, gradOutput)
       model:accGradParameters(input, gradOutput)
    end,
