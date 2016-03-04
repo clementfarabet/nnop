@@ -79,14 +79,19 @@ layer3 = linear2(layer2)
 weight1 = linear1.parameterNodes.weightNode
 sparse1 = nn.L1Penalty(.001)(weight1)
 
+-- compute cost.
+rawCost = nn.Sum(1)(layer3)
+penalty = nn.Sum(1)(nn.Sum(2)(sparse1))
+cost = nn.CAddTable()({rawCost, penalty})
+
 -- build final model:
-model = nn.gModule({input}, {layer3})
+model = nn.gModule({input}, {cost})
 
 -- train the model:
 for i = 1,10 do
    input = torch.rand(10)
    output = model:forward(input)
-   gradOutput = torch.rand(2)
+   gradOutput = torch.rand(1)
    gradInput = model:updateGradInput(input, gradOutput)
    model:accGradParameters(input, gradOutput)
 end
